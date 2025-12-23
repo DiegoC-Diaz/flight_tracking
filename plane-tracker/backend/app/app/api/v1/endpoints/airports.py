@@ -16,3 +16,11 @@ async def get_airport_info(
 ) -> IGetResponseBase:
     airport_data = await airport_service.get_airport_data(icao)
     return create_response(data=airport_data, message="Airport data retrieved successfully")
+
+
+@router.get("/test")
+async def test_endpoint():
+    async with httpx.AsyncClient() as client:
+        response = await client.get("https://api.github.com")
+        data = response.json()
+    return create_response(data=data, message="Test endpoint successful")
