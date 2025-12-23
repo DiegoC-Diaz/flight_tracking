@@ -25,7 +25,8 @@ class OpenSkyService:
     def set_token(self, token):
         self.token = token
         
-        
+    def refresh_token(self):
+        self.token = self.request_token()
 
     def get_token(self):        
         return self.token

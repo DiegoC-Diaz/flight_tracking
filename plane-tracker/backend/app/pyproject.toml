@@ -30,6 +30,12 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
+fastapi = "^0.127.0"
+uvicorn = {extras = ["standard"], version = "^0.40.0"}
+asyncer = "^0.0.11"
+pydantic = "^2.12.5"
+pydantic-settings = "^2.12.0"
+fastapi-pagination = "^0.15.4"
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = [ "F401",]
