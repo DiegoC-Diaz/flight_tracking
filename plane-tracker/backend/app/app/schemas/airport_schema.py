@@ -7,6 +7,9 @@ class AirportOut(BaseModel):
     icue:str
     location:str|None
     
+
+    
 class AirportResponse(IGetResponseBase[List[AirportOut]]):
-    pass
+    airports:List[AirportOut]
+
 

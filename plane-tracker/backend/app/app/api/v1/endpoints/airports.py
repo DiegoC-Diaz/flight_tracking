@@ -15,6 +15,7 @@ async def get_airport_info(
     airport_service: AirportServiceDep,
 ) -> IGetResponseBase:
     airport_data = await airport_service.get_airport_data(icao)
+    
     return create_response(data=airport_data, message="Airport data retrieved successfully")
 
 

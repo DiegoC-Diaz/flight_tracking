@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import List
 
 
-class Vector(BaseModel):
+class VectorOut(BaseModel):
     icao24:str
     callsign:str|None
     origin_country:str
@@ -13,8 +13,8 @@ class Vector(BaseModel):
     baro_altitude:float
     category:int
 
-class VectorsOut(BaseModel):
-    vectors: List[Vector]
+class VectorsResponse(BaseModel):
+    vectors: List[VectorOut]
     
     
 class VectorRequest(BaseModel):
