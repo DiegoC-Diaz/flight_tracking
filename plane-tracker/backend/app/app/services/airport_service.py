@@ -20,7 +20,7 @@ class AirportService:
            response=await client.get(url,params=params)
            if response.is_error:
                raise Exception("Error al obtener los vuelos actuales")
-
+        
            return response.json()
     
     

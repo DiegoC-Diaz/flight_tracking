@@ -1,7 +1,4 @@
-from typing import Annotated
-from fastapi import APIRouter, Query,Depends
-from asyncer import asyncify, create_task_group, syncify
-from app.core.config import settings
+from fastapi import APIRouter,Depends
 import httpx
 from app.schemas.response_schema import IGetResponseBase, create_response
 from app.schemas.vector_schema import VectorRequest
@@ -18,6 +15,6 @@ async def get_vectors_in_area(osky_service: OskyServiceDep, vector_request: Vect
     vector_tuple=tuple(model_dic.values())
     response =await osky_service.get_state_vectors_area(bbox=vector_tuple)
     
-    return response
+    return create_response(data=response, message="Vectors in area retrieved successfully")
 
 
