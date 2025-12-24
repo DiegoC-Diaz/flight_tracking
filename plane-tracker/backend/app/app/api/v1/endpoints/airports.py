@@ -5,7 +5,7 @@ from app.core.config import settings
 import httpx
 from app.schemas.response_schema import IGetResponseBase, create_response
 from app.core.dependencies.airport_service_dependencies import AirportServiceDep
-
+from app.utils.mappers.vector_mapper import map_vector_from_osky
 
 router = APIRouter()
 
@@ -15,8 +15,8 @@ async def get_airport_info(
     airport_service: AirportServiceDep,
 ) -> IGetResponseBase:
     airport_data = await airport_service.get_airport_data(icao)
-    
-    return create_response(data=airport_data, message="Airport data retrieved successfully")
+    response = map_vector_from_osky(airport_data)
+    return create_response(data=response, message="Airport data retrieved successfully")
 
 
 @router.get("/test")
