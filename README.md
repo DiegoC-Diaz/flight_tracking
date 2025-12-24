@@ -1,4 +1,7 @@
 
+## TODO:
+Update the client to fetch a new token only if the request fails.
+
 ## ICAO CODEs:
 MHLM: Ramón Villeda Morales International Airport (San Pedro Sula)
 MHPR: Palmerola International Airport / Soto Cano Air Base (Comayagua/Tegucigalpa)
