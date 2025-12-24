@@ -3,9 +3,11 @@ from pydantic import BaseModel
 from typing import List
 
 class AirportOut(BaseModel):
-    id:str
-    icue:str
-    location:str|None
+    ident:str
+    type:str
+    name:str
+    iso_country:str
+   
     
 
     
