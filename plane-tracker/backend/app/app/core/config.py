@@ -2,7 +2,8 @@ import os
 from pydantic_settings import BaseSettings
 from pydantic import AnyHttpUrl
 from enum import Enum
-
+from dotenv import load_dotenv
+load_dotenv(os.path.expanduser("../../.env"))
 
 class ModeEnum(str, Enum):
     development = "development"
@@ -17,6 +18,9 @@ class Settings(BaseSettings, extra='ignore'):
     API_VERSION: str = "v1"
     API_V1_STR: str = f"/api/{API_VERSION}"
     WHEATER_URL: str = "https://wttr.in"
+    AIRPORT_DB_TOKEN: str | None = os.getenv("AIRPORT_DB_TOKEN")
+    CLIENT_ID: str | None = os.getenv("CLIENT_ID")
+    SECRET: str | None =os.getenv
 
     
     class Config:

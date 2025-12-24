@@ -1,4 +1,4 @@
-from response_schema import IGetResponseBase
+from app.schemas.response_schema import IGetResponseBase
 from pydantic import BaseModel
 from typing import List
 

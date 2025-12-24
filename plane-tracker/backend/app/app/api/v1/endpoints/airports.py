@@ -4,7 +4,7 @@ from asyncer import asyncify, create_task_group, syncify
 from app.core.config import settings
 import httpx
 from app.schemas.response_schema import IGetResponseBase, create_response
-from app.api.deps import AirportServiceDep
+from app.core.dependencies.airport_service_dependencies import AirportServiceDep
 
 
 router = APIRouter()

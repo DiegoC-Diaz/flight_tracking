@@ -1,18 +1,12 @@
 import httpx
-from dotenv import load_dotenv
-import os
-load_dotenv()
+from app.core.config import settings
 
-
-
-
-class AirportDBService:
+class AirportService:
     def __init__(self,token=None):
         self.base_url="https://airportdb.io/api/v1/airport"
         self.token=token
         if token is None:
-            self.token=os.getenv("AIRPORT_DB_TOKEN")
-        pass
+            self.token=settings.AIRPORT_DB_TOKEN
 
     def set_token(self,token):
         self.token=token
@@ -37,18 +31,3 @@ class AirportDBService:
         
         
         
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

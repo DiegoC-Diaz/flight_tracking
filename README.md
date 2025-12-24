@@ -5,7 +5,23 @@ MHPR: Palmerola International Airport / Soto Cano Air Base (Comayagua/Tegucigalp
 MHLC: Goloson International Airport (La Ceiba)
 MHRO: Juan Manuel Gálvez International Airport (Roatan)
 
+## Arquitectura del Proyecto
 
+El proyecto sigue una **Arquitectura en Capas**, diseñada para separar responsabilidades y facilitar el mantenimiento:
+
+- **Capa de Presentación (`app/api`)**:
+  - Responsable de definir los endpoints (rutas) de la API.
+  - Maneja la entrada y salida de datos HTTP.
+  - Utiliza inyección de dependencias para acceder a los servicios.
+
+- **Capa de Lógica de Negocio (`app/services`)**:
+  - Contiene la lógica central de la aplicación.
+  - Se encarga de la comunicación con APIs externas (como OpenSky y AirportDB).
+  - Procesa los datos antes de devolverlos a la capa de presentación.
+
+- **Capa de Configuración (`app/core`)**:
+  - Centraliza la configuración del proyecto (variables de entorno, constantes).
+  - Define modelos de configuración global.
 
 ```
 
