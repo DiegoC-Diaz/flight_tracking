@@ -25,3 +25,4 @@ async def test_endpoint():
         response = await client.get("https://api.github.com")
         data = response.json()
     return create_response(data=data, message="Test endpoint successful")
+
