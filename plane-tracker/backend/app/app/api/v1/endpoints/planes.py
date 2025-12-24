@@ -13,10 +13,10 @@ def get_vectors_for_plane() -> IGetResponseBase:
     return create_response(data={"vectors": []}, message="Vectors retrieved successfully")
 
 @router.get("/vectors/area")
-def get_vectors_in_area(osky_service: OskyServiceDep, vector_request: VectorRequest = Depends()) -> IGetResponseBase:
+async def get_vectors_in_area(osky_service: OskyServiceDep, vector_request: VectorRequest = Depends()) -> IGetResponseBase:
     
-    osky_service.get_state_vectors_area(vector_request.model_dump())
+    response =await osky_service.get_state_vectors_area(vector_request.model_dump())
     
-    return create_response(data=vector_request.model_dump(), message="Vectors in area retrieved successfully")
+    return response
 
 
