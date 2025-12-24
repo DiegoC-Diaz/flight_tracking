@@ -34,7 +34,7 @@ def map_vector_from_osky(osky_data: dict) -> VectorOut:
     state_vectors = osky_data.get("states")
 
     if not state_vectors:
-        return VectorOut(vectors=[])
+        return VectorsResponse(vectors=[])
 
     # Use a list comprehension with the helper function, filtering out None results
     vector_list = [
