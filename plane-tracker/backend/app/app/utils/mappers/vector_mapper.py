@@ -1,7 +1,7 @@
 from app.schemas.vector_schema import  VectorOut,VectorsResponse
 from typing import List, Optional
 
-def _map_single_vector_from_state(state: list) -> Optional[Vector]:
+def _map_single_vector_from_state(state: list) -> Optional[VectorOut]:
     """
     Maps a single state vector list from OpenSky to a Vector object.
     Returns None if the state list is malformed.
