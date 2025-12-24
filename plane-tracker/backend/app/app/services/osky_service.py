@@ -131,7 +131,7 @@ class OskyService:
 # Ejemplo de uso
 async def main():
     # Opción 1: Usar context manager (recomendado)
-    async with OpenSkyService() as service:
+    async with OskyService() as service:
         # Autenticar (opcional, se hace automáticamente en la primera petición)
         await service.authenticate()
         print(f"Token obtenido: {service.get_token()[:20]}...\n")
