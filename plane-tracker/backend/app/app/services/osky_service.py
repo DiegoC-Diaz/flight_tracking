@@ -122,6 +122,13 @@ class OskyService:
         response.raise_for_status()
         
         return response.json()
+    async def get_state_vector_from_flight(self,icao:str):
+    
+        params={"icao24":icao,"time":0}    
+        url= f'{self.base_url}/tracks/all'
+        response = await self.oauth_client.get(url,params=params)
+        response.raise_for_status()
+        return response.json()
     
     async def close(self):
         """Cierra el cliente OAuth2."""

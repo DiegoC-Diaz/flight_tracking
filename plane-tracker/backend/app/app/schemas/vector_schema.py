@@ -22,4 +22,4 @@ class VectorRequest(BaseModel):
     lomin:float
     lamax:float
     lomax:float
-    pass
+    
