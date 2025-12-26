@@ -22,3 +22,9 @@ async def get_vectors_in_area(osky_service: OskyServiceDep, vector_request: Vect
     osky_data = await osky_service.get_state_vectors_area(bbox=bbox)
     mapped_data = map_vector_from_osky(osky_data)
     return create_response(data=mapped_data.model_dump(), message="Vectors in area retrieved successfully")
+
+
+@router.get("/planes/vector{icao}")
+async def get_vector_for_plane(icao: str, osky_service: OskyServiceDep) -> IGetResponseBase:
+    response=osky_service.get_state_vector_from_flight(icao)
+    return create_response(data=response, message="Vector retrieved successfully")
