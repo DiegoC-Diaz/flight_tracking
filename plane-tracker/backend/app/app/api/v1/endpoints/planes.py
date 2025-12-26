@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends,Query
 from app.schemas.response_schema import IGetResponseBase, create_response
 from app.schemas.vector_schema import VectorRequest
-from app.core.dependencies.osky_service_dependencies import OskyServiceDep
+from app.core.dependencies import OskyServiceDep
 from app.utils.mappers.vector_mapper import map_vector_from_osky
-
+from typing import Annotated
 router = APIRouter()
 
 @router.get("/vectors")
@@ -24,7 +24,7 @@ async def get_vectors_in_area(osky_service: OskyServiceDep, vector_request: Vect
     return create_response(data=mapped_data.model_dump(), message="Vectors in area retrieved successfully")
 
 
-@router.get("/planes/vector{icao}")
-async def get_vector_for_plane(icao: str, osky_service: OskyServiceDep) -> IGetResponseBase:
-    response=osky_service.get_state_vector_from_flight(icao)
+@router.get("/vector")
+async def get_vector_for_plane(icao: Annotated[str, Query(description="ICAO24 for Aircraft")], osky_service: OskyServiceDep) -> IGetResponseBase:
+    response=await osky_service.get_state_vector_from_flight(icao)
     return create_response(data=response, message="Vector retrieved successfully")
