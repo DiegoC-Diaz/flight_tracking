@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 services:
   fastapi_server:
@@ -28,6 +28,26 @@ services:
       - caddy_data:/data
       - caddy_config:/config
 
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: plane-tracker-db
+    environment:
+      POSTGRES_DB: planetracker
+      POSTGRES_USER: planetracker
+      POSTGRES_PASSWORD: planetracker
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db_init:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:7
+    container_name: plane-tracker-redis
+    ports:
+      - "6379:6379"
+
 volumes:
   caddy_data:
   caddy_config:
+  postgres_data:

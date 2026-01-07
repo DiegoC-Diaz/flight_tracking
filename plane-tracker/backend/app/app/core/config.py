@@ -21,6 +21,7 @@ class Settings(BaseSettings, extra='ignore'):
     AIRPORT_DB_TOKEN: str | None = os.getenv("AIRPORT_DB_TOKEN")
     CLIENT_ID: str | None = os.getenv("CLIENT_ID")
     SECRET: str | None =os.getenv
+    DATABASE_URL:str = os.getenv("DATABASE_URL")
 
     
     class Config:

@@ -1,9 +1,13 @@
 from fastapi import (
     FastAPI,
+    Depends,  # Import Depends
 )
 from app.api.v1.api import api_router as api_router_v1
 from app.core.config import settings
+from app.core.database import init_db, get_session  # Import get_session
 from contextlib import asynccontextmanager
+from sqlmodel import select  # Import select
+from sqlmodel.ext.asyncio.session import AsyncSession  # Import AsyncSession
 from starlette.middleware.cors import CORSMiddleware
 
 
@@ -36,12 +40,15 @@ if settings.BACKEND_CORS_ORIGINS:
     )
 
 @app.get("/")
-async def root():
+async def root(session: AsyncSession = Depends(get_session)):
     """
-    An example "Hello world" FastAPI route.
+    An example "Hello world" FastAPI route that also tests the database connection.
     """
-    # if oso.is_allowed(user, "read", message):
-    return {"message": "Hello World"}
+    # Execute a simple query to test the session
+    result = await session.execute(select(1))
+    db_status = "connected" if result.scalar() == 1 else "error"
+
+    return {"message": "Hello World", "database": db_status}
 
 
 # Add Routers

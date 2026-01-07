@@ -36,6 +36,8 @@ asyncer = "^0.0.11"
 pydantic = "^2.12.5"
 pydantic-settings = "^2.12.0"
 fastapi-pagination = "^0.15.4"
+sqlmodel = "^0.0.31"
+aiosqlite = "^0.22.1"
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = [ "F401",]

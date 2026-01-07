@@ -18,6 +18,12 @@ async def get_airport_info(
     response = map_airport_from_airportdb(airport_data)
     return create_response(data=response, message="Airport data retrieved successfully")
 
+@router.get("/all")
+async def get_all_airports()->IGetResponseBase:
+    #work in progess
+    pass
+
+
 
 @router.get("/test")
 async def test_endpoint():
