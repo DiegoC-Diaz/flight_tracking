@@ -15,8 +15,9 @@ async def get_airport_info(
     airport_service: AirportServiceDep,
 ) -> IGetResponseBase:
     airport_data = await airport_service.get_airport_data(icao)
-    response = map_airport_from_airportdb(airport_data)
-    return create_response(data=response, message="Airport data retrieved successfully")
+    print("airport_data:")
+    print(airport_data)
+    return create_response(data=airport_data, message="Airport data retrieved successfully")
 
 @router.get("/all")
 async def get_all_airports()->IGetResponseBase:

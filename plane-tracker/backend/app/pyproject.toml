@@ -38,6 +38,8 @@ pydantic-settings = "^2.12.0"
 fastapi-pagination = "^0.15.4"
 sqlmodel = "^0.0.31"
 aiosqlite = "^0.22.1"
+geoalchemy2 = {extras = ["shapely"], version = "^0.18.1"}
+asyncpg = "^0.31.0"
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = [ "F401",]

@@ -4,7 +4,7 @@ from fastapi import (
 )
 from app.api.v1.api import api_router as api_router_v1
 from app.core.config import settings
-from app.core.database import init_db, get_session  # Import get_session
+from app.core.database import init_db, get_session, close_db  # Import get_session and close_db
 from contextlib import asynccontextmanager
 from sqlmodel import select  # Import select
 from sqlmodel.ext.asyncio.session import AsyncSession  # Import AsyncSession
@@ -15,8 +15,10 @@ from starlette.middleware.cors import CORSMiddleware
 async def lifespan(app: FastAPI):
     # Startup
     print("startup fastapi")
+    #await init_db()
     yield
     # shutdown
+    await close_db()
     print("shutdown fastapi")
     
 

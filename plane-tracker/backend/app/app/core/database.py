@@ -1,15 +1,17 @@
 from typing import AsyncGenerator
 from sqlmodel import SQLModel
-from sqlmodel.ext.asyncio.session import AsyncEngine, AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.orm import sessionmaker
+from app.models.airport_model import Airport
+from app.core.config import settings
 
-# 1. Adapt DATABASE_URL for the async driver (aiosqlite)
-DATABASE_URL = "sqlite+aiosqlite:///./sql_app.db"
-
+DATABASE_URL = settings.DATABASE_URL
+# 1. Adapt DATABASE_URL for the async driver (aiosqlite)=
 # 2. Create an async engine
 #    connect_args is still needed for SQLite.
 #    echo=True logs SQL statements, useful for debugging.
-engine = create_async_engine(DATABASE_URL, echo=True, connect_args={"check_same_thread": False})
+engine = create_async_engine(DATABASE_URL, echo=True)
 
 async def init_db():
     """
@@ -19,8 +21,11 @@ async def init_db():
     """
     async with engine.begin() as conn:
         # await conn.run_sync(SQLModel.metadata.drop_all) # Use this to drop tables for a fresh start
-        pass
-        #await conn.run_sync(SQLModel.metadata.create_all)
+        await conn.run_sync(SQLModel.metadata.create_all)
+
+async def close_db():
+    # This closes all connections in the pool
+    await engine.dispose()
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     """

@@ -1,33 +1,34 @@
-import httpx
-from app.core.config import settings
+from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlmodel import select
+from app.models.airport_model import Airport 
 
 class AirportService:
-    def __init__(self,token=None):
-        self.base_url="https://airportdb.io/api/v1/airport"
-        self.token=token
-        if token is None:
-            self.token=settings.AIRPORT_DB_TOKEN
+    """
+    This service handles database operations related to airports.
+    It's designed to be initialized with a database session.
+    """
 
-    def set_token(self,token):
-        self.token=token
-    
-    async def get_airport_data(self,icao):
-        url=f'{self.base_url}/{icao}'
-        params={"apiToken":self.token}
-        
-        
-        async with httpx.AsyncClient() as client:
-           response=await client.get(url,params=params)
-           if response.is_error:
-               raise Exception("Error al obtener los vuelos actuales")
-        
-           return response.json()
-    
-    
+    def __init__(self, session: AsyncSession):
+        """
+        Initializes the AirportService with a database session.
 
-           
-           
+        Args:
+            session: An asynchronous database session.
+        """
+        self.session = session
+
+    async def get_airport_data(self, icao: str):
+        """
+        Retrieves airport data from the database by its ICAO code.
+
+        Args:
+            icao: The ICAO code of the airport to retrieve.
         
+        Returns:
+            An Airport model instance or None if not found.
+        """
+        statement = select(Airport).where(Airport.icao == icao)
         
-        
-        
+        result = await self.session.exec(statement)
+
+        return result.first()
