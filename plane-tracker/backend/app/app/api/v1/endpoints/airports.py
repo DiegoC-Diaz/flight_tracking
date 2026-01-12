@@ -26,6 +26,7 @@ async def get_all_airports()->IGetResponseBase:
 
 
 
+
 @router.get("/test")
 async def test_endpoint():
     async with httpx.AsyncClient() as client:

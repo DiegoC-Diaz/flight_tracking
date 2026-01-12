@@ -13,7 +13,7 @@ class Airport(SQLModel, table=True):
     iata: Optional[str] = Field(default=None)
     name: str
     location: Any = Field(sa_column=sa.Column(Geography("POINT", srid=4326)))
-
+    
     # This is the magic part that fixes your error
     @field_serializer("location")
     def serialize_location(self, location: Any) -> Optional[List[float]]:
