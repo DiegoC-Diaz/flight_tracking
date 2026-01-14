@@ -12,6 +12,7 @@ DATABASE_URL = settings.DATABASE_URL
 #    connect_args is still needed for SQLite.
 #    echo=True logs SQL statements, useful for debugging.
 engine = create_async_engine(DATABASE_URL, echo=True)
+print("Database URL:", DATABASE_URL)
 
 async def init_db():
     """

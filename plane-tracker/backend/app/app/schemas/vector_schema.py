@@ -22,4 +22,9 @@ class VectorRequest(BaseModel):
     lomin:float
     lamax:float
     lomax:float
+    timestamp:int
+    
+class TimeIntervalParams(BaseModel):
+    start:int
+    end:int
     
