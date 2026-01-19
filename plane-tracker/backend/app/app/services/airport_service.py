@@ -32,3 +32,41 @@ class AirportService:
         result = await self.session.exec(statement)
 
         return result.first()
+    
+    async def get_closest_airports(self, latitude: float, longitude: float, limit: int = 10):
+        """
+        Retrieves the closest airports to a given latitude and longitude using PostGIS geospatial queries.
+
+        Args:
+            latitude: The latitude to search from.
+            longitude: The longitude to search from.
+            limit: The maximum number of airports to return.
+        """
+        from sqlalchemy import func
+        statement = select(Airport).order_by(
+            func.ST_Distance(
+                Airport.location,
+                func.ST_MakePoint(longitude, latitude)
+            )
+        ).limit(limit)
+        result = await self.session.exec(statement)
+        return result.all()
+    
+    async def get_airports_by_area(self, bbox: tuple[float, float, float, float]):
+        """
+        Retrieves all airports within a specified bounding box using PostGIS geospatial queries.
+
+        Args:
+            bbox: A tuple containing (lon_min, lat_min, lon_max, lat_max)
+        
+        Returns:
+            A list of Airport model instances within the bounding box.
+        """
+        from sqlalchemy import func
+        lon_min, lat_min, lon_max, lat_max = bbox
+        envelope = func.ST_MakeEnvelope(lon_min, lat_min, lon_max, lat_max, 4326)
+        statement = select(Airport).where(
+            func.ST_Within(func.ST_GeomFromWKB(Airport.location), envelope)
+        )
+        result = await self.session.exec(statement)
+        return result.all()

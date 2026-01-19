@@ -19,18 +19,27 @@ async def get_airport_info(
     print(airport_data)
     return create_response(data=airport_data, message="Airport data retrieved successfully")
 
-@router.get("/all")
-async def get_all_airports()->IGetResponseBase:
-    #work in progess
-    pass
 
+@router.get("/closest")
+async def get_closest_airports(
+    latitude: Annotated[float, Query(description="Latitude of the reference point")],
+    longitude: Annotated[float, Query(description="Longitude of the reference point")],
+    limit: Annotated[int, Query(description="Number of closest airports to retrieve")],
+    airport_service: AirportServiceDep,
+) -> IGetResponseBase:
+    closest_airports = await airport_service.get_closest_airports(latitude, longitude, limit)
+    mapped_airports = [map_airport_from_airportdb(airport) for airport in closest_airports]
+    return create_response(data=mapped_airports, message="Closest airports retrieved successfully")
 
-
-
-@router.get("/test")
-async def test_endpoint():
-    async with httpx.AsyncClient() as client:
-        response = await client.get("https://api.github.com")
-        data = response.json()
-    return create_response(data=data, message="Test endpoint successful")
-
+@router.get("/by-area")
+async def get_airports_by_area(
+    lomin: Annotated[float, Query(description="Minimum longitude of the bounding box")],
+    lamin: Annotated[float, Query(description="Minimum latitude of the bounding box")],
+    lomax: Annotated[float, Query(description="Maximum longitude of the bounding box")],
+    lamax: Annotated[float, Query(description="Maximum latitude of the bounding box")],
+    airport_service: AirportServiceDep,
+) -> IGetResponseBase:
+    bbox = (lomin, lamin, lomax, lamax)
+    airports_in_area = await airport_service.get_airports_by_area(bbox)
+    
+    return create_response(data=airports_in_area, message="Airports in area retrieved successfully")
