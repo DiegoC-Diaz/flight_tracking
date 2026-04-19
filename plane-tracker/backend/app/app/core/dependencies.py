@@ -4,7 +4,7 @@ from app.services.airport_service import AirportService
 from app.services.osky_service import OskyService
 from app.services.flight_service import FlightService
 from app.core.database import get_session
-from sqlmodel.ext.asyncio.session import AsyncSession  # ¡Importa AsyncSession!
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 # Nota: Si AirportService u OskyService necesitan acceso a la base de datos,
 # necesitarás inyectarles la sesión aquí. Por ahora, asumimos que no.
