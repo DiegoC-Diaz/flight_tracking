@@ -2,7 +2,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.models.flight_model import Flight
 from sqlmodel import select,func
 from sqlalchemy import cast
-from geoalchemy2 import Geography
+from geoalchemy2 import Geometry
 from datetime import datetime
 class FlightService:
     """
@@ -27,7 +27,7 @@ class FlightService:
         result =  self.session.exec(statement)
         return result.first()
     
-    async def get_all_flights_on_area(self, bbox: tuple[float, float, float, float],timestamp:datetime):
+    async def get_all_flights_on_area(self, bbox: tuple[float, float, float, float], timestamp: datetime):
         """
         Retrieves all flights within a specified bounding box.
 
@@ -37,13 +37,37 @@ class FlightService:
         Returns:
             A list of Flight model instances within the bounding box.
         """
-        # Use ST_MakeEnvelope for PostGIS geography type (lon_min, lat_min, lon_max, lat_max, 4326)
-        bbox = func.ST_MakeEnvelope(bbox[0], bbox[1], bbox[2], bbox[3],4326)
-    
-        statement = select(Flight).where(
-            func.ST_Intersects(Flight.location, cast(bbox, Geography)),
-            Flight.time==timestamp   
-        ).limit(1000)  # Limit to 1000 results to avoid overload
+        # Match replay behavior:
+        # - spatial bbox with && against a geometry envelope
+        # - filter inside the dataset one-hour window stored in DB
+        # - keep rows where minute matches and second is +/-5
+        bbox_geom = func.ST_MakeEnvelope(bbox[0], bbox[1], bbox[2], bbox[3], 4326)
+
+        bounds_statement = select(func.min(Flight.time), func.max(Flight.time))
+        bounds_result = await self.session.exec(bounds_statement)
+        dataset_start, dataset_end = bounds_result.one()
+        if dataset_start is None or dataset_end is None:
+            return []
+
+        target_minute = timestamp.minute
+        target_second = timestamp.second
+        second_start = max(0, target_second - 5)
+        second_end = min(59, target_second + 5)
+
+        statement = (
+            select(Flight)
+            .where(
+                cast(Flight.location, Geometry).op("&&")(bbox_geom),
+                Flight.time >= dataset_start,
+                Flight.time <= dataset_end,
+                func.extract("minute", Flight.time) == target_minute,
+                func.extract("second", Flight.time) >= second_start,
+                func.extract("second", Flight.time) <= second_end,
+            )
+            .distinct(Flight.icao24)
+            .order_by(Flight.icao24, Flight.time.desc())
+            .limit(1000)
+        )
         result = await self.session.exec(statement)
         return result.all()
         

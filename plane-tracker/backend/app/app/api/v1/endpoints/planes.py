@@ -4,8 +4,12 @@ from app.schemas.vector_schema import VectorRequest, TimeIntervalParams
 from app.core.dependencies import OskyServiceDep
 from app.core.dependencies import FlightServiceDep
 from app.utils.mappers.vector_mapper import map_vector_from_osky
+from app.utils.mappers.geojson_mapper import GeoJSONMapper
 from typing import Annotated
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+import logging
+
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.get("/vectors")
@@ -34,10 +38,27 @@ async def get_flights_in_area(flight_service: FlightServiceDep, vector_request: 
         vector_request.lomax,
         vector_request.lamax,
     )
-    parsed_datetime=datetime.fromtimestamp(vector_request.timestamp)
-    flight_data=await  flight_service.get_all_flights_on_area(bbox=bbox, timestamp=parsed_datetime) 
-    return create_response(data=flight_data, message="Flights in area retrieved successfully")
+    parsed_datetime = datetime.fromtimestamp(vector_request.timestamp, tz=timezone.utc)
+    logger.warning(
+        "flights/area request bbox=%s timestamp_unix=%s timestamp_utc=%s",
+        bbox,
+        vector_request.timestamp,
+        parsed_datetime.isoformat(),
+    )
+    logger.warning(
+        "flights/area time_window start_utc=%s end_utc=%s",
+        (parsed_datetime - timedelta(seconds=10)).isoformat(),
+        (parsed_datetime + timedelta(seconds=10)).isoformat(),
+    )
 
+    flight_data = await flight_service.get_all_flights_on_area(bbox=bbox, timestamp=parsed_datetime)
+    logger.warning(
+        "flights/area result_count=%s timestamp_utc=%s",
+        len(flight_data),
+        parsed_datetime.isoformat(),
+    )
+    geojson_data = GeoJSONMapper.flights_to_geojson_feature_collection(flight_data)
+    return create_response(data=geojson_data, message="Flights in area retrieved successfully")
 
 @router.get("/flights/{icao}/track")
 async def get_flight_path(icao:Annotated[str,Path(description="ICAO24 for Aircraft")], flight_service:FlightServiceDep, time_interval: TimeIntervalParams = Depends())-> IGetResponseBase:
@@ -45,8 +66,9 @@ async def get_flight_path(icao:Annotated[str,Path(description="ICAO24 for Aircra
     start=datetime.fromtimestamp(time_interval.start)
     end=datetime.fromtimestamp(time_interval.end)
     flight_path=await flight_service.get_flight_path_by_aircraft(icao24=icao, start=start, end=end)
+    geojson_data = GeoJSONMapper.flight_path_to_geojson_feature(flight_path)
     
-    return create_response(data=flight_path, message="Flight path retrieved successfully")
+    return create_response(data=geojson_data, message="Flight path retrieved successfully")
 
 @router.get("/vector")
 async def get_vector_for_plane(icao: Annotated[str, Path(description="ICAO24 for Aircraft")], osky_service: OskyServiceDep) -> IGetResponseBase:

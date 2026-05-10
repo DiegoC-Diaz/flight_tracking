@@ -1,6 +1,7 @@
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 from app.models.airport_model import Airport 
+from sqlalchemy import func
 
 class AirportService:
     """
@@ -42,7 +43,7 @@ class AirportService:
             longitude: The longitude to search from.
             limit: The maximum number of airports to return.
         """
-        from sqlalchemy import func
+
         statement = select(Airport).order_by(
             func.ST_Distance(
                 Airport.location,
@@ -62,7 +63,7 @@ class AirportService:
         Returns:
             A list of Airport model instances within the bounding box.
         """
-        from sqlalchemy import func
+
         lon_min, lat_min, lon_max, lat_max = bbox
         envelope = func.ST_MakeEnvelope(lon_min, lat_min, lon_max, lat_max, 4326)
         statement = select(Airport).where(
